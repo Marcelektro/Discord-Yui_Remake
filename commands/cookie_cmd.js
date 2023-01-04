@@ -1,14 +1,12 @@
-const main = require('../index');
+const dbutil = require("../dbutil")
 const ratelimiter = require('../ratelimiter');
-
-let cookies = new Map();
 
 let rateLimits = new ratelimiter.RateLimiterMap(10_000);
 
 module.exports = {
     name: 'cookie',
     description: 'Gives a cookie to the mentioned user',
-    execute(message, args) {
+    async execute(message) {
         // Check if a user was mentioned in the command
         if (message.mentions.users.size) {
             // Get the mentioned user
@@ -25,12 +23,13 @@ module.exports = {
                 return message.reply(`${user}, You may not use the \`${module.exports.name}\` command again for another ${rateLimit.getTimeLeftSec()} seconds.`);
             }
 
+            const dbR = `userData.${message.author.id}.givenCookiesTo.${user.id}`;
+
             // Update the cookie count for the mentioned user
-            const count = cookies.get(user.id) || 0;
-            cookies.set(user.id, count + 1);
+            const count = await dbutil.incrementDb(dbR, 0, 1);
 
             // Send a message to the channel
-            message.reply(`You gave ${user} a cookie 🍪! That's ${count + 1} cookies now!`);
+            message.reply(`You gave ${user} a cookie 🍪! That's ${count} cookies now!`);
 
         } else {
             // No user was mentioned, send an error message

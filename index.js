@@ -5,6 +5,12 @@ const fs = require('fs');
 const dotenv = require('dotenv');
 dotenv.config();
 
+const { QuickDB } = require('quick.db');
+
+const database = new QuickDB({
+    filePath: "./database.sql"
+});
+
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages,
@@ -18,6 +24,7 @@ let commands = new Map();
 const commandFiles = fs.readdirSync('./commands').filter((file) => file.endsWith('.js'));
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
+    console.log(`Loading ${command.name} command from ${file}...`)
     commands.set(command.name, command);
 }
 
@@ -68,3 +75,5 @@ client.on('messageCreate', (message) => {
 });
 
 client.login(process.env.DISCORD_TOKEN);
+
+module.exports.getDatabase = () => {return database}
