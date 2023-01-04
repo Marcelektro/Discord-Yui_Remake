@@ -22,7 +22,7 @@ module.exports = {
             const rateLimit = rateLimits.get(message.author.id);
 
             if (!rateLimit.canDo()) {
-                return message.reply(`You need to wait ${rateLimit.getTimeLeftSec()} more seconds.`);
+                return message.reply(`${user}, You may not use the \`${module.exports.name}\` command again for another ${rateLimit.getTimeLeftSec()} seconds.`);
             }
 
             // Update the cookie count for the mentioned user
