@@ -21,9 +21,9 @@ const client = new Client({
 // Load the command files
 let commands = new Map();
 
-const commandFiles = fs.readdirSync('./commands').filter((file) => file.endsWith('.js'));
+const commandFiles = fs.readdirSync(`${__dirname}/commands`).filter((file) => file.endsWith('.js'));
 for (const file of commandFiles) {
-    const command = require(`./commands/${file}`);
+    const command = require(`${__dirname}/commands/${file}`);
     console.log(`Loading ${command.name} command from ${file}...`)
     commands.set(command.name, command);
 }
