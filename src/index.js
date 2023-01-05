@@ -8,7 +8,7 @@ dotenv.config();
 const { QuickDB } = require('quick.db');
 
 const database = new QuickDB({
-    filePath: "./database.sql"
+    filePath: process.env.DATABASE_PATH || "./database.sqlite"
 });
 
 const client = new Client({

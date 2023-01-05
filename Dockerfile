@@ -13,5 +13,9 @@ COPY src/. /app
 
 RUN npm install
 
+# Default database path
+RUN mkdir -p /data
+ENV DATABASE_PATH /data/database.sqlite
+
 # Start the bot
 CMD ["node", "index.js"]
