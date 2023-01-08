@@ -26,6 +26,6 @@ module.exports = {
         const uwuifiedText = uwuify(text);
 
         // Send the uwuified text back to the channel
-        message.reply(uwuifiedText);
+        message.channel.send({content: uwuifiedText, allowedMentions: { parse: [] }});
     },
 };
