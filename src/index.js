@@ -2,15 +2,20 @@ const { Client, GatewayIntentBits } = require('discord.js');
 
 const fs = require('fs');
 
+const commandCategoryList = require('./category_list');
+
+// .env
 const dotenv = require('dotenv');
 dotenv.config();
 
+// Database
 const { QuickDB } = require('quick.db');
 
 const database = new QuickDB({
     filePath: process.env.DATABASE_PATH || "./database.sqlite"
 });
 
+// Discord Client
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages,
@@ -19,12 +24,34 @@ const client = new Client({
 });
 
 // Load the command files
-let commands = new Map();
+const commands = new Map();
 
 const commandFiles = fs.readdirSync(`${__dirname}/commands`).filter((file) => file.endsWith('.js'));
 for (const file of commandFiles) {
     const command = require(`${__dirname}/commands/${file}`);
+
+    // Make sure the command at least has name and execute function.
+    if (!command.name || !command.execute) {
+        console.log(`Ignoring loading invalid command from ${file} file!`)
+        continue
+    }
+
     console.log(`Loading ${command.name} command from ${file}...`)
+
+    // Check if the command has its category defined
+    if (command.category) {
+        // Check if the category the command is in, exists.
+        // If it doesn't, warn about it.
+        if (!commandCategoryList.hasCategory(command.category)) {
+            console.log(`[WARN] Command ${command.name} has a category (${command.category}) that doesn't exist in the categories list.`)
+        }
+    }
+    // If it has no category, warn about it.
+    else {
+        console.log(`[WARN] Command ${command.name} has no category set!`)
+    }
+
+    // Add the command to the set.
     commands.set(command.name, command);
 }
 
@@ -55,15 +82,6 @@ client.on('messageCreate', (message) => {
         // Ignore the message if the command is not found
         if (!command) return;
 
-        // Check if the command requires any arguments and if they were provided
-        if (command.args && !args.length) {
-            let reply = `You didn't provide any arguments, ${message.author}!`;
-            if (command.usage) {
-                reply += `\nThe proper usage would be: \`${client.prefix}${command.name} ${command.usage}\``;
-            }
-            return message.channel.send(reply);
-        }
-
         // Execute the command
         try {
             command.execute(message, args);
@@ -77,3 +95,4 @@ client.on('messageCreate', (message) => {
 client.login(process.env.DISCORD_TOKEN);
 
 module.exports.getDatabase = () => {return database}
+module.exports.getCommands = () => {return [...commands.values()]}

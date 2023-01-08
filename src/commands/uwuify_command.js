@@ -17,6 +17,7 @@ function uwuify(text) {
 module.exports = {
     name: 'uwuify',
     description: 'Uwuifies the given text',
+    category: 'Fun',
     execute(message, args) {
         // Get the text to uwuify from the command arguments
         const text = args.join(' ');

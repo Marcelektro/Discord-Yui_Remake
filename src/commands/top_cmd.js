@@ -10,6 +10,7 @@ GlobalFonts.registerFromPath(`${__dirname}/../assets/fonts/DejaVuSans.ttf`, 'Dej
 module.exports = {
     name: 'top',
     description: 'View the money leaderboard for your server',
+    category: 'Economy',
     async execute(message) {
         // Create a canvas
         const canvas = Canvas.createCanvas(400, 311);

@@ -5,7 +5,14 @@ let rateLimits = new ratelimiter.RateLimiterMap(10_000);
 
 module.exports = {
     name: 'cookie',
-    description: 'Gives a cookie to the mentioned user',
+    description: 'Bake a lovely cookie for the one you tag.',
+    category: 'Counter',
+    usage: {
+        format: "y!cookie \<member\>",
+        examples: [
+            { command: "y!cookie @member", functionality: "Gives a cookie :cookie: to @member" }
+        ]
+    },
     async execute(message) {
         // Check if a user was mentioned in the command
         if (message.mentions.users.size) {
